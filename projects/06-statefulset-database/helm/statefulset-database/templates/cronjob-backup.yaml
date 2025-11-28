@@ -1,0 +1,63 @@
+{{- if .Values.backup.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "statefulset-database.fullname" . }}-backup
+  labels:
+    {{- include "statefulset-database.labels" . | nindent 4 }}
+    component: backup
+spec:
+  schedule: {{ .Values.backup.schedule | quote }}
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            {{- include "statefulset-database.selectorLabels" . | nindent 12 }}
+            component: backup
+        spec:
+          serviceAccountName: {{ include "statefulset-database.serviceAccountName" . }}
+          restartPolicy: OnFailure
+          containers:
+          - name: backup
+            image: {{ .Values.backup.image }}
+            command:
+            - /bin/bash
+            - -c
+            - |
+              set -e
+              BACKUP_NAME="backup-$(date +%Y%m%d-%H%M%S)"
+              PVC_NAME="{{ include "statefulset-database.fullname" . }}-postgresql-data-0"
+              NAMESPACE="{{ .Release.Namespace }}"
+              
+              echo "Creating snapshot: $BACKUP_NAME for PVC: $PVC_NAME"
+              
+              # Create VolumeSnapshot via API
+              kubectl create volumesnapshot $BACKUP_NAME \
+                --namespace=$NAMESPACE \
+                --source-pvc=$PVC_NAME \
+                --snapshot-class={{ .Values.snapshot.snapshotClassName }} || exit 1
+              
+              echo "Backup $BACKUP_NAME created successfully"
+              
+              # Cleanup old snapshots (older than retentionDays)
+              echo "Cleaning up old snapshots..."
+              kubectl get volumesnapshots -n $NAMESPACE -o json | \
+                jq -r --arg days "{{ .Values.backup.retentionDays }}" \
+                '.items[] | select(.metadata.creationTimestamp | fromdateiso8601 < (now - ($days | tonumber) * 86400)) | .metadata.name' | \
+                xargs -r kubectl delete volumesnapshot -n $NAMESPACE || true
+            env:
+            - name: NAMESPACE
+              value: {{ .Release.Namespace | quote }}
+            resources:
+              requests:
+                cpu: 100m
+                memory: 128Mi
+              limits:
+                cpu: 200m
+                memory: 256Mi
+{{- end }}
+

@@ -1,0 +1,13 @@
+apiVersion: platform.k8sbox.io/v1
+kind: Application
+metadata:
+  name: example-app
+  namespace: default
+spec:
+  replicas: 3
+  image: nginx:latest
+  port: 80
+  env:
+    ENVIRONMENT: production
+    LOG_LEVEL: info
+

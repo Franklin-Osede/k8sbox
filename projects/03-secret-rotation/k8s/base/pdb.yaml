@@ -1,0 +1,12 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: secret-rotation
+  labels:
+    app: secret-rotation
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: secret-rotation
+

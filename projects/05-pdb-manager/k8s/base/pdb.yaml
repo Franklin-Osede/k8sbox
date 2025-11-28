@@ -1,0 +1,12 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: pdb-manager
+  labels:
+    app: pdb-manager
+spec:
+  selector:
+    matchLabels:
+      app: pdb-manager
+  minAvailable: 2  # At least 2 pods must be available during disruptions
+

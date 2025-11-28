@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - service-v1.yaml
+  - service-v2.yaml
+  - virtualservice.yaml
+  - destinationrule.yaml
+  - peerauthentication.yaml
+
+commonLabels:
+  app: example-service
+  project: k8sbox
+

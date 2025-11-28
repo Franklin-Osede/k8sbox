@@ -1,0 +1,22 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: example-service
+  namespace: default
+spec:
+  hosts:
+  - example-service
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: example-service
+        subset: v1
+      weight: 90
+    - destination:
+        host: example-service
+        subset: v2
+      weight: 10
+

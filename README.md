@@ -1,169 +1,212 @@
-# 🚀 k8sbox - Advanced Kubernetes Projects
+# K8sBox - Kubernetes Projects Collection
 
-**Production-ready Kubernetes projects demonstrating senior-level skills for technical interviews.**
+## Overview
 
-[![Kubernetes](https://img.shields.io/badge/Kubernetes-1.28+-326CE5?style=flat&logo=kubernetes&logoColor=white)](https://kubernetes.io/)
-[![Helm](https://img.shields.io/badge/Helm-3.x-0F1689?style=flat&logo=helm&logoColor=white)](https://helm.sh/)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+K8sBox is a collection of **production-ready Kubernetes projects** that demonstrate Kubernetes concepts, best practices, and real-world patterns. Each project is a complete, deployable application built with **NestJS**, following **Domain-Driven Design (DDD)** and **Test-Driven Development (TDD)** principles.
 
----
+These projects implement Kubernetes concepts and serve as portfolio pieces demonstrating practical understanding of cloud-native architecture, scalability, reliability, and observability.
 
-## 🎯 Overview
+## 🏗️ Architecture
 
-This repository contains **10 advanced Kubernetes projects** designed to demonstrate production-level skills. Each project follows:
+The collection follows a **microservices-ready architecture** with each project demonstrating different Kubernetes concepts:
 
-- ✅ **Domain-Driven Design (DDD)** principles
-- ✅ **Test-Driven Development (TDD)** methodology
-- ✅ **Best practices** and design patterns
-- ✅ **Helm charts** for deployment
-- ✅ **Production-ready** configurations
+### Project Structure
 
----
+```
+k8sbox/
+├── projects/
+│   ├── 01-health-checks/          # Health checks with circuit breakers
+│   ├── 02-configmap-reload/        # ConfigMap hot-reload system
+│   ├── 03-secret-rotation/         # Automated secret rotation
+│   ├── 04-hpa-custom-metrics/      # HPA with custom metrics
+│   ├── 05-pod-disruption-budget/  # PDB for high availability
+│   ├── 06-statefulset-database/   # StatefulSets with backups
+│   ├── 07-custom-operator/         # Custom Kubernetes operator
+│   ├── 08-service-mesh/            # Istio traffic management
+│   ├── 09-gitops/                  # ArgoCD GitOps workflows
+│   └── 10-zero-trust-security/     # Network policies & mTLS
+```
 
-## 📋 Projects
+### Common Architecture Pattern
 
-### 🔥 Core Infrastructure Projects
+Each project follows **Clean Architecture** with clear separation:
 
-#### 01. **Multi-Stage Health Check System**
-**Domain:** Observability & Reliability  
-**Skills:** Liveness/Readiness/Startup Probes, Health Endpoints, Monitoring  
-**Tech:** NestJS, Kubernetes Probes, Prometheus Metrics  
-**Time:** 6-8 hours
+```
+src/
+├── domain/              # Business logic (entities, value objects, domain services)
+├── application/         # Use cases (application services)
+├── infrastructure/     # External integrations (K8s API, databases, etc.)
+└── presentation/       # API layer (controllers, DTOs, interceptors)
+```
 
-#### 02. **ConfigMap Hot-Reload Service**
+## ✨ Key Features
+
+### 🎯 Production-Ready Patterns
+
+- **Domain-Driven Design**: Clear domain boundaries and business logic
+- **Test-Driven Development**: Comprehensive test coverage (unit + integration)
+- **Clean Architecture**: Separation of concerns across layers
+- **SOLID Principles**: Maintainable and extensible code
+
+### ☸️ Kubernetes Features
+
+- **Workloads**: Deployments, StatefulSets, DaemonSets, Jobs, CronJobs
+- **Autoscaling**: HPA with custom metrics, VPA, cluster autoscaling
+- **Service Mesh**: Istio for traffic management, mTLS, canary deployments
+- **Operators**: Custom CRDs and controllers for platform engineering
+- **GitOps**: ArgoCD workflows for declarative deployments
+- **Security**: RBAC, Network Policies, Pod Security Standards, secret management
+
+### 📊 Observability
+
+- **Prometheus**: Metrics collection and custom metrics API
+- **Grafana**: Dashboards and visualization
+- **Structured Logging**: Winston with context-aware logging
+- **Health Checks**: Liveness, readiness, and startup probes
+- **Distributed Tracing**: OpenTelemetry integration
+
+### 🔒 Security & Compliance
+
+- **Secret Rotation**: Automated secret rotation without downtime
+- **RBAC**: Role-based access control
+- **Network Policies**: Zero-trust network security
+- **Pod Security**: Security contexts and policies
+- **mTLS**: Mutual TLS for service-to-service communication
+
+### 🚀 Scalability & Reliability
+
+- **Horizontal Pod Autoscaler**: Multi-metric autoscaling
+- **Pod Disruption Budgets**: High availability guarantees
+- **Circuit Breakers**: Graceful failure handling
+- **Health Check History**: Track application health over time
+- **Config Hot-Reload**: Zero-downtime configuration updates
+
+## 🛠️ Technology Stack
+
+### Backend
+- **Framework**: NestJS 10+
+- **Language**: TypeScript 5+
+- **Testing**: Jest
+- **Logging**: Winston
+- **API Docs**: Swagger/OpenAPI
+
+### Kubernetes
+- **Orchestration**: Kubernetes 1.28+
+- **Package Manager**: Helm 3.x
+- **Configuration**: Kustomize
+- **Service Mesh**: Istio
+- **GitOps**: ArgoCD
+- **Monitoring**: Prometheus + Grafana
+
+### Infrastructure
+- **Containerization**: Docker
+- **CI/CD**: GitHub Actions
+- **Observability**: Prometheus, Grafana, Loki
+- **Message Broker**: Redis (for async operations)
+
+## 📦 Projects Overview
+
+### 01. Health Checks with Circuit Breakers
+**Domain:** Reliability & Observability  
+**Skills:** Health probes, circuit breaker pattern, health history tracking
+
+- Liveness, readiness, and startup probes
+- Circuit breaker implementation
+- Health check history API
+- Metrics and monitoring
+
+### 02. ConfigMap Hot-Reload System
 **Domain:** Configuration Management  
-**Skills:** Zero-downtime Config Updates, File Watching, Volume Mounts  
-**Tech:** NestJS, ConfigMap Volumes, File Watchers  
-**Time:** 8-10 hours
+**Skills:** ConfigMaps, hot-reload, versioning, validation
 
-#### 03. **Secret Rotation Automation**
+- Zero-downtime configuration updates
+- ConfigMap versioning and rollback
+- Schema validation
+- Change notifications
+
+### 03. Secret Rotation Automation
 **Domain:** Security & Compliance  
-**Skills:** Secret Management, Pod Disruption Budgets, Automation  
-**Tech:** External Secrets Operator, CronJobs, RBAC  
-**Time:** 10-12 hours
+**Skills:** Secrets management, CronJobs, RBAC, automation
 
-#### 04. **Horizontal Pod Autoscaler with Custom Metrics**
+- Automated secret rotation
+- Zero-downtime rotation
+- Rotation history tracking
+- Pod Disruption Budget integration
+
+### 04. HPA with Custom Metrics
 **Domain:** Scalability & Performance  
-**Skills:** HPA, Prometheus Adapter, Custom Metrics, Cost Optimization  
-**Tech:** Prometheus, Custom Metrics API, HPA v2  
-**Time:** 12-14 hours
+**Skills:** HPA, custom metrics, Prometheus adapter, autoscaling
 
-#### 05. **Pod Disruption Budget Manager**
+- Custom business metrics (RPS, queue depth, connections)
+- Multi-metric HPA configuration
+- Prometheus integration
+- Configurable scaling behavior
+
+### 05. Pod Disruption Budget Manager
 **Domain:** High Availability  
-**Skills:** PDB, Rolling Updates, SLA Guarantees  
-**Tech:** Kubernetes PDB, Deployment Strategies  
-**Time:** 6-8 hours
+**Skills:** PDB, rolling updates, availability guarantees
 
----
+- PDB configuration and monitoring
+- Rolling update strategies
+- Availability tracking
+- Node drain protection
 
-### 🏗️ Advanced Architecture Projects
-
-#### 06. **StatefulSet Database with Automated Backups**
+### 06. StatefulSet Database with Backups
 **Domain:** Data Persistence  
-**Skills:** StatefulSets, Volume Snapshots, Backup/Restore  
-**Tech:** PostgreSQL, Volume Snapshots, CronJobs  
-**Time:** 14-16 hours
+**Skills:** StatefulSets, PVCs, volume snapshots, backup/restore
 
-#### 07. **Custom Kubernetes Operator (CRD + Controller)**
+- PostgreSQL StatefulSet deployment
+- Automated backups with CronJobs
+- Volume snapshots
+- Disaster recovery procedures
+
+### 07. Custom Kubernetes Operator
 **Domain:** Platform Engineering  
-**Skills:** CRDs, Controllers, Operator Pattern, Kubernetes API  
-**Tech:** Kubebuilder/Operator SDK, Go, Custom Resources  
-**Time:** 16-20 hours
+**Skills:** CRDs, controllers, operator pattern, reconciliation
 
-#### 08. **Service Mesh Traffic Management**
+- Custom Resource Definitions
+- Controller implementation
+- Reconciliation logic
+- Status management
+
+### 08. Service Mesh Traffic Management
 **Domain:** Microservices Architecture  
-**Skills:** Istio/Linkerd, Canary Deployments, Circuit Breakers, mTLS  
-**Tech:** Istio, VirtualServices, DestinationRules  
-**Time:** 14-16 hours
+**Skills:** Istio, canary deployments, circuit breakers, mTLS
 
-#### 09. **GitOps Deployment Pipeline**
-**Domain:** CI/CD & DevOps  
-**Skills:** ArgoCD/Flux, Declarative Deployments, Multi-Environment  
-**Tech:** ArgoCD, GitOps, Helm Charts  
-**Time:** 12-14 hours
+- Traffic splitting and canary deployments
+- Circuit breaker configuration
+- Mutual TLS (mTLS)
+- Custom routing rules
 
-#### 10. **Zero-Trust Network Security**
+### 09. GitOps with ArgoCD
+**Domain:** CI/CD & GitOps  
+**Skills:** ArgoCD, GitOps workflows, declarative deployments
+
+- ArgoCD application configuration
+- Multi-environment workflows
+- Automated sync policies
+- Rollback capabilities
+
+### 10. Zero-Trust Network Security
 **Domain:** Security & Compliance  
-**Skills:** Network Policies, RBAC, Pod Security Standards  
-**Tech:** NetworkPolicy, RBAC, PSS, Admission Controllers  
-**Time:** 10-12 hours
+**Skills:** Network Policies, RBAC, mTLS, security policies
 
----
+- Network policy implementation
+- Zero-trust architecture
+- Service-to-service authentication
+- Security audit logging
 
-## 🏗️ Project Structure
-
-Each project follows this structure:
-
-```
-project-XX-name/
-├── src/                    # Application source code (DDD structure)
-│   ├── domain/            # Domain entities, value objects
-│   ├── application/       # Use cases, services
-│   ├── infrastructure/    # Repositories, external services
-│   └── presentation/      # Controllers, DTOs
-├── tests/                 # TDD tests
-│   ├── unit/
-│   ├── integration/
-│   └── e2e/
-├── k8s/                   # Kubernetes manifests
-│   ├── base/              # Kustomize base
-│   └── overlays/          # Environment overlays
-├── helm/                  # Helm charts
-│   └── chart-name/
-│       ├── Chart.yaml
-│       ├── values.yaml
-│       └── templates/
-├── docs/                  # Documentation
-│   ├── architecture.md
-│   ├── deployment.md
-│   └── api.md
-├── docker/                # Dockerfiles
-│   └── Dockerfile
-├── .github/               # CI/CD workflows
-│   └── workflows/
-├── README.md              # Project-specific README
-└── Makefile              # Common tasks
-
-```
-
----
-
-## 🎯 Design Principles
-
-### Domain-Driven Design (DDD)
-- **Domain Layer:** Core business logic, entities, value objects
-- **Application Layer:** Use cases, application services
-- **Infrastructure Layer:** External integrations, repositories
-- **Presentation Layer:** Controllers, DTOs, API definitions
-
-### Test-Driven Development (TDD)
-- Write tests first (Red)
-- Implement minimal code (Green)
-- Refactor (Refactor)
-- Unit tests for domain logic
-- Integration tests for services
-- E2E tests for complete flows
-
-### Best Practices
-- **Clean Architecture:** Separation of concerns
-- **SOLID Principles:** Maintainable, extensible code
-- **12-Factor App:** Cloud-native principles
-- **Kubernetes Best Practices:** Resource limits, probes, security contexts
-- **Helm Best Practices:** Reusable charts, values management
-
----
-
-## 🚀 Getting Started
+## 🚀 Quick Start
 
 ### Prerequisites
-- Kubernetes cluster (minikube, kind, or managed)
-- `kubectl` configured
-- `helm` 3.x installed
-- Docker installed
-- Node.js 20+ (for NestJS projects)
-- Go 1.21+ (for operator projects)
 
-### Quick Start
+- **Node.js** 20+
+- **Docker** 20+
+- **Kubernetes** cluster (minikube, kind, or cloud)
+- **Helm** 3.x
+- **kubectl** configured
+
+### Setup
 
 ```bash
 # Clone repository
@@ -176,90 +219,278 @@ cd projects/01-health-checks
 # Install dependencies
 npm install
 
-# Run tests (TDD)
+# Run tests
 npm test
 
-# Build Docker image
-docker build -t health-checks:latest -f docker/Dockerfile .
-
-# Deploy with Helm
-helm install health-checks ./helm/health-checks
-
-# Verify deployment
-kubectl get pods,svc
+# Start development server
+npm run start:dev
 ```
 
----
+### Deploy to Kubernetes
 
-## 📚 Learning Path
+```bash
+# Using Helm (recommended)
+cd projects/01-health-checks
+helm install health-checks ./helm/health-checks \
+  --namespace default \
+  --create-namespace
 
-### Start Here (First 5 Projects)
-1. **Health Checks** - Foundation of observability
-2. **ConfigMap Reload** - Configuration management
-3. **HPA** - Scalability fundamentals
-4. **PDB** - High availability
-5. **StatefulSet** - Data persistence
+# Using Kustomize
+kubectl apply -k k8s/base/
+```
 
-### Advanced Projects (Next 5)
-6. **Custom Operator** - Platform engineering
-7. **Service Mesh** - Microservices architecture
-8. **GitOps** - Modern DevOps
-9. **Network Security** - Security hardening
-10. **Secret Rotation** - Security automation
+## 📚 Project Details
 
----
+Each project includes:
 
-## 🎯 Skills Demonstrated
+- ✅ **Complete source code** with DDD architecture
+- ✅ **Comprehensive tests** (unit + integration)
+- ✅ **Helm charts** for easy deployment
+- ✅ **Kustomize manifests** for flexibility
+- ✅ **Dockerfile** for containerization
+- ✅ **Detailed README** with documentation
+- ✅ **API documentation** (Swagger)
+- ✅ **Makefile** for common tasks
 
-### Technical Skills
-- ✅ Kubernetes advanced concepts (HPA, StatefulSets, Operators)
-- ✅ Helm chart development
-- ✅ Domain-Driven Design
-- ✅ Test-Driven Development
-- ✅ Microservices architecture
-- ✅ Service mesh (Istio)
-- ✅ GitOps (ArgoCD)
-- ✅ Security (RBAC, Network Policies, Secrets)
+## 🧪 Testing
 
-### DevOps Skills
-- ✅ CI/CD pipelines
-- ✅ Infrastructure as Code
-- ✅ Observability (metrics, logs, traces)
-- ✅ Disaster recovery
-- ✅ Multi-environment deployments
+### Run Tests
 
----
+```bash
+# All tests
+npm test
+
+# Unit tests only
+npm run test:unit
+
+# Integration tests only
+npm run test:integration
+
+# With coverage
+npm run test:cov
+```
+
+### Test Coverage
+
+Each project maintains:
+- **Unit Tests**: Domain logic, value objects, entities
+- **Integration Tests**: API endpoints, external services
+- **Coverage**: Minimum 80% code coverage
+
+## 📊 Monitoring & Observability
+
+### Health Checks
+
+```bash
+# Liveness probe
+curl http://localhost:3000/health/live
+
+# Readiness probe
+curl http://localhost:3000/health/ready
+
+# Startup probe
+curl http://localhost:3000/health/startup
+```
+
+### Metrics
+
+```bash
+# Prometheus metrics
+curl http://localhost:3000/metrics/prometheus
+
+# Custom metrics (project 04)
+curl http://localhost:3000/metrics/summary
+```
+
+### Logs
+
+All projects use structured logging with Winston:
+- JSON format for production
+- Colored output for development
+- Context-aware logging
+- Log levels: error, warn, info, debug
+
+## 🔧 Development
+
+### Adding a New Project
+
+1. Create project directory: `projects/XX-project-name/`
+2. Initialize NestJS: `nest new project-name`
+3. Follow DDD structure:
+   - Domain layer (entities, value objects, domain services)
+   - Application layer (use cases)
+   - Infrastructure layer (external services)
+   - Presentation layer (controllers, DTOs)
+4. Write tests (TDD approach)
+5. Create Helm charts
+6. Add Dockerfile
+7. Write comprehensive README
+
+### Project Template
+
+```bash
+projects/XX-project-name/
+├── src/
+│   ├── domain/
+│   ├── application/
+│   ├── infrastructure/
+│   └── presentation/
+├── tests/
+│   ├── unit/
+│   └── integration/
+├── helm/
+│   └── project-name/
+├── k8s/
+│   └── base/
+├── docker/
+│   └── Dockerfile
+├── package.json
+├── tsconfig.json
+├── jest.config.js
+├── Makefile
+└── README.md
+```
+
+## 🐳 Docker
+
+### Build Image
+
+```bash
+# Build project image
+docker build -t project-name:latest -f docker/Dockerfile .
+
+# Run container
+docker run -p 3000:3000 project-name:latest
+```
+
+### Multi-stage Builds
+
+All Dockerfiles use multi-stage builds:
+- **Builder stage**: Install dependencies and compile
+- **Production stage**: Minimal runtime image
+
+## ☸️ Kubernetes Deployment
+
+### Helm Charts
+
+Each project includes a Helm chart with:
+- Configurable values
+- Resource limits/requests
+- Health probes
+- Security contexts
+- Service accounts
+- RBAC (when needed)
+
+### Kustomize Manifests
+
+Alternative deployment using Kustomize:
+- Base configuration
+- Environment overlays (dev, staging, prod)
+- Resource patching
+
+## 🔒 Security Best Practices
+
+All projects implement:
+
+- ✅ **Non-root containers**: Run as non-privileged user
+- ✅ **Read-only filesystem**: Immutable containers
+- ✅ **Security contexts**: Pod and container security
+- ✅ **RBAC**: Least privilege access
+- ✅ **Network policies**: Zero-trust networking
+- ✅ **Secret management**: Encrypted secrets
+- ✅ **Image scanning**: Vulnerability checks
+
+## 📈 Performance & Scalability
+
+### Resource Management
+
+- **Resource requests**: Guaranteed resources
+- **Resource limits**: Prevent resource exhaustion
+- **HPA**: Automatic scaling based on metrics
+- **PDB**: Maintain availability during updates
+
+### Optimization
+
+- **Multi-stage builds**: Smaller images
+- **Layer caching**: Faster builds
+- **Health probes**: Efficient health checking
+- **Connection pooling**: Database optimization
+
+## 🛣️ Roadmap
+
+### Phase 1: Core Projects ✅
+- [x] Health Checks
+- [x] ConfigMap Reload
+- [x] Secret Rotation
+- [x] HPA Custom Metrics
+- [x] Pod Disruption Budget
+
+### Phase 2: Additional Projects 🚧
+- [ ] StatefulSet Database
+- [ ] Custom Operator
+- [ ] Service Mesh
+- [ ] GitOps
+- [ ] Zero-Trust Security
+
+### Phase 3: Integration & Polish 📋
+- [ ] End-to-end testing
+- [ ] Performance benchmarks
+- [ ] Security audits
+- [ ] Documentation improvements
+- [ ] Video tutorials
+
+## 🤝 Contributing
+
+Contributions are welcome! Please follow these guidelines:
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/new-feature`
+3. Follow DDD and TDD principles
+4. Write comprehensive tests
+5. Update documentation
+6. Commit: `git commit -m 'Add new feature'`
+7. Push: `git push origin feature/new-feature`
+8. Create Pull Request
+
+### Code Standards
+
+- **TypeScript**: Strict mode enabled
+- **ESLint**: Code linting
+- **Prettier**: Code formatting
+- **Jest**: Testing framework
+- **Conventional Commits**: Commit message format
 
 ## 📖 Documentation
 
 Each project includes:
-- **Architecture documentation** (DDD structure)
-- **API documentation** (Swagger/OpenAPI)
-- **Deployment guide** (Helm values, K8s manifests)
-- **Testing guide** (TDD approach)
-- **Troubleshooting guide**
 
----
+- **README.md**: Comprehensive project documentation
+- **API Docs**: Swagger/OpenAPI specification
+- **Architecture**: DDD structure explanation
+- **Deployment**: Kubernetes deployment guides
+- **Troubleshooting**: Common issues and solutions
 
-## 🤝 Contributing
+## 🎓 Learning Resources
 
-This is a personal learning repository, but suggestions and improvements are welcome!
+These projects demonstrate:
 
----
+- **Kubernetes Concepts**: Pods, Services, Deployments, StatefulSets, etc.
+- **Kubernetes Patterns**: Operators, Service Mesh, GitOps
+- **Best Practices**: Security, observability, scalability
+- **Real-World Scenarios**: Production-ready implementations
 
 ## 📄 License
 
-MIT License - Feel free to use these projects for learning and interviews.
+MIT License - see [LICENSE](LICENSE) for details.
+
+## 🙏 Acknowledgments
+
+- **NestJS**: Excellent Node.js framework
+- **Kubernetes**: Powerful orchestration platform
+- **Prometheus**: Metrics collection
+- **Helm**: Package management
+- **Istio**: Service mesh
 
 ---
 
-## 🎓 How to Use in Interviews
-
-### Example Response:
-
-> "I've built several production-ready Kubernetes projects following DDD and TDD principles. For example, I implemented a custom Kubernetes operator that manages database resources, with full Helm charts for deployment. The project includes comprehensive tests, follows clean architecture principles, and demonstrates advanced K8s concepts like CRDs and controllers."
-
----
-
-**Built with ❤️ to demonstrate advanced Kubernetes skills**
-
+**K8sBox** - Master Kubernetes with Production-Ready Projects 🚀☸️

@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: secret-rotation-job
+  labels:
+    app: secret-rotation
+spec:
+  schedule: "0 */6 * * *"  # Every 6 hours
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: secret-rotation
+        spec:
+          serviceAccountName: secret-rotation
+          restartPolicy: OnFailure
+          containers:
+          - name: rotation-job
+            image: secret-rotation:latest
+            command:
+              - /bin/sh
+              - -c
+              - |
+                curl -X POST http://secret-rotation:80/rotation/rotate-all
+            env:
+            - name: PORT
+              value: "3000"
+            - name: LOG_LEVEL
+              value: "info"
+            - name: ROTATION_INTERVAL_HOURS
+              value: "24"
+

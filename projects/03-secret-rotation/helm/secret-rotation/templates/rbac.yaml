@@ -1,0 +1,33 @@
+{{- if .Values.rbac.create }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "secret-rotation.serviceAccountName" . }}
+  labels:
+    {{- include "secret-rotation.labels" . | nindent 4 }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "secret-rotation.fullname" . }}
+  labels:
+    {{- include "secret-rotation.labels" . | nindent 4 }}
+rules:
+  {{- toYaml .Values.rbac.rules | nindent 2 }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "secret-rotation.fullname" . }}
+  labels:
+    {{- include "secret-rotation.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "secret-rotation.fullname" . }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "secret-rotation.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+{{- end }}
+

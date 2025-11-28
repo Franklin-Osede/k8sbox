@@ -1,0 +1,75 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: statefulset-database
+  labels:
+    app: statefulset-database
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: postgresql-backup
+  labels:
+    app: postgresql-backup
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: statefulset-database
+  labels:
+    app: statefulset-database
+rules:
+  - apiGroups: ["apps"]
+    resources: ["statefulsets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["pods", "persistentvolumeclaims"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["snapshot.storage.k8s.io"]
+    resources: ["volumesnapshots", "volumesnapshotcontents"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: statefulset-database
+  labels:
+    app: statefulset-database
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: statefulset-database
+subjects:
+  - kind: ServiceAccount
+    name: statefulset-database
+    namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: postgresql-backup
+  labels:
+    app: postgresql-backup
+rules:
+  - apiGroups: ["snapshot.storage.k8s.io"]
+    resources: ["volumesnapshots"]
+    verbs: ["get", "list", "watch", "create", "delete"]
+  - apiGroups: [""]
+    resources: ["persistentvolumeclaims"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: postgresql-backup
+  labels:
+    app: postgresql-backup
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: postgresql-backup
+subjects:
+  - kind: ServiceAccount
+    name: postgresql-backup
+    namespace: default
+

@@ -1,0 +1,37 @@
+# Prometheus Adapter Configuration
+# This file should be used to configure Prometheus Adapter for custom metrics
+# Install Prometheus Adapter: https://github.com/kubernetes-sigs/prometheus-adapter
+
+rules:
+  custom:
+    - seriesQuery: 'requests_per_second{namespace!="",pod!=""}'
+      resources:
+        overrides:
+          namespace: {resource: "namespace"}
+          pod: {resource: "pod"}
+      name:
+        matches: "^requests_per_second"
+        as: "requests_per_second"
+      metricsQuery: 'sum(rate(<<.Series>>{<<.LabelMatchers>>}[2m])) by (<<.GroupBy>>)'
+
+    - seriesQuery: 'queue_depth{namespace!="",pod!=""}'
+      resources:
+        overrides:
+          namespace: {resource: "namespace"}
+          pod: {resource: "pod"}
+      name:
+        matches: "^queue_depth"
+        as: "queue_depth"
+      metricsQuery: 'sum(<<.Series>>{<<.LabelMatchers>>}) by (<<.GroupBy>>)'
+
+    - seriesQuery: 'active_connections{namespace!="",pod!=""}'
+      resources:
+        overrides:
+          namespace: {resource: "namespace"}
+          pod: {resource: "pod"}
+      name:
+        matches: "^active_connections"
+        as: "active_connections"
+      metricsQuery: 'sum(<<.Series>>{<<.LabelMatchers>>}) by (<<.GroupBy>>)'
+
+

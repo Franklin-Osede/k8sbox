@@ -1,0 +1,17 @@
+apiVersion: v2
+name: statefulset-database
+description: A Helm chart for StatefulSet Database with Automated Backups
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - kubernetes
+  - statefulset
+  - postgresql
+  - database
+  - backup
+  - volume-snapshots
+maintainers:
+  - name: Your Name
+    email: your.email@example.com
+

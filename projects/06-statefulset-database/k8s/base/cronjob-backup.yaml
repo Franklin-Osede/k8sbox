@@ -1,0 +1,49 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: postgresql-backup
+  labels:
+    app: postgresql-backup
+spec:
+  schedule: "0 2 * * *"  # Daily at 2 AM
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: postgresql-backup
+        spec:
+          serviceAccountName: postgresql-backup
+          restartPolicy: OnFailure
+          containers:
+          - name: backup
+            image: postgres:15-alpine
+            command:
+            - /bin/bash
+            - -c
+            - |
+              set -e
+              BACKUP_NAME="backup-$(date +%Y%m%d-%H%M%S)"
+              PVC_NAME="postgresql-data-0"
+              NAMESPACE="default"
+              
+              echo "Creating snapshot: $BACKUP_NAME for PVC: $PVC_NAME"
+              
+              # Create VolumeSnapshot
+              kubectl create volumesnapshot $BACKUP_NAME \
+                --namespace=$NAMESPACE \
+                --source-pvc=$PVC_NAME \
+                --snapshot-class=csi-snapshotter || exit 1
+              
+              echo "Backup $BACKUP_NAME created successfully"
+            resources:
+              requests:
+                cpu: 100m
+                memory: 128Mi
+              limits:
+                cpu: 200m
+                memory: 256Mi
+

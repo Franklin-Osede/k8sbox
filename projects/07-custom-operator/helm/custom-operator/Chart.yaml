@@ -1,0 +1,15 @@
+apiVersion: v2
+name: custom-operator
+description: A Helm chart for Custom Kubernetes Operator
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - kubernetes
+  - operator
+  - crd
+  - controller
+maintainers:
+  - name: Your Name
+    email: your.email@example.com
+
