@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: configmap-reload
+  labels:
+    app: configmap-reload
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: configmap-reload
+  template:
+    metadata:
+      labels:
+        app: configmap-reload
+    spec:
+      containers:
+      - name: configmap-reload
+        image: configmap-reload:latest
+        ports:
+        - containerPort: 3000
+          name: http
+        env:
+        - name: PORT
+          value: "3000"
+        - name: CONFIG_PATH
+          value: "/config"
+        - name: LOG_LEVEL
+          value: "info"
+        volumeMounts:
+        - name: config
+          mountPath: /config
+          readOnly: true
+      volumes:
+      - name: config
+        configMap:
+          name: app-config
+      resources:
+        requests:
+          cpu: 100m
+          memory: 128Mi
+        limits:
+          cpu: 500m
+          memory: 512Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 1001
+          capabilities:
+            drop:
+            - ALL
+

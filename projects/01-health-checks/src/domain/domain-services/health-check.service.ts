@@ -3,6 +3,7 @@ import { HealthCheckResult } from '../value-objects/health-check-result.vo';
 import { HealthStatusEntity, HealthStatus } from '../entities/health-status.entity';
 import { DependencyStatus } from '../value-objects/dependency-status.vo';
 import { AppLoggerService } from '../../infrastructure/external/logger.service';
+import { CircuitBreakerService } from '../../infrastructure/external/circuit-breaker.service';
 
 /**
  * Domain Service: HealthCheckService
@@ -14,7 +15,10 @@ export class HealthCheckDomainService {
   private readonly startupTimeout: number;
   private readonly dependencyTimeout: number;
 
-  constructor(private readonly logger: AppLoggerService) {
+  constructor(
+    private readonly logger: AppLoggerService,
+    private readonly circuitBreaker: CircuitBreakerService,
+  ) {
     this.startupTimeout = parseInt(process.env.STARTUP_TIMEOUT_MS || '5000', 10);
     this.dependencyTimeout = parseInt(process.env.DEPENDENCY_TIMEOUT_MS || '2000', 10);
     
@@ -148,17 +152,26 @@ export class HealthCheckDomainService {
   }
 
   /**
-   * Check all dependencies with timeout
+   * Check all dependencies with timeout and circuit breaker
    */
   private async checkDependencies(): Promise<DependencyStatus[]> {
     const dependencies: DependencyStatus[] = [];
 
-    // Check system resources
-    dependencies.push(await this.checkSystemResources());
+    // Check system resources (with circuit breaker)
+    const systemResourcesCheck = await this.circuitBreaker.execute(
+      'system-resources',
+      async () => this.checkSystemResources(),
+      async () => DependencyStatus.unhealthy('system-resources', 'Circuit breaker open', 0),
+    );
+    dependencies.push(systemResourcesCheck);
 
-    // Check external services (example: can add database, Redis, etc.)
-    // dependencies.push(await this.checkDatabase());
-    // dependencies.push(await this.checkRedis());
+    // Check external services with circuit breaker (example)
+    // const dbCheck = await this.circuitBreaker.execute(
+    //   'database',
+    //   async () => this.checkDatabase(),
+    //   async () => DependencyStatus.unhealthy('database', 'Circuit breaker open', 0),
+    // );
+    // dependencies.push(dbCheck);
 
     return dependencies;
   }

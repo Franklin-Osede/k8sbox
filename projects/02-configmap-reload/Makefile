@@ -1,11 +1,11 @@
 .PHONY: help install test build docker-build deploy clean
 
-PROJECT_NAME := health-checks
+PROJECT_NAME := configmap-reload
 IMAGE_NAME := $(PROJECT_NAME)
 IMAGE_TAG := latest
 REGISTRY := docker.io
 NAMESPACE := default
-HELM_CHART := ./helm/health-checks
+HELM_CHART := ./helm/configmap-reload
 
 help: ## Show this help message
 	@echo 'Usage: make [target]'
@@ -69,3 +69,5 @@ kubectl:logs: ## Get logs
 kubectl:port-forward: ## Port forward to service
 	kubectl port-forward svc/$(PROJECT_NAME) 3000:80 -n $(NAMESPACE)
 
+kubectl:update-config: ## Update ConfigMap and watch reload
+	kubectl patch configmap app-config --patch '{"data":{"app.properties":"app.name=Updated Config\napp.version=2.0.0"}}' -n $(NAMESPACE)

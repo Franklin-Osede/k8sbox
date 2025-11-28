@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'projects/02-configmap-reload/**'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'projects/02-configmap-reload/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: projects/02-configmap-reload/package-lock.json
+
+    - name: Install dependencies
+      working-directory: ./projects/02-configmap-reload
+      run: npm ci
+
+    - name: Run linter
+      working-directory: ./projects/02-configmap-reload
+      run: npm run lint
+
+    - name: Run tests
+      working-directory: ./projects/02-configmap-reload
+      run: npm test
+
+    - name: Generate coverage
+      working-directory: ./projects/02-configmap-reload
+      run: npm run test:cov
+
+    - name: Build
+      working-directory: ./projects/02-configmap-reload
+      run: npm run build
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'push'
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Build Docker image
+      working-directory: ./projects/02-configmap-reload
+      run: |
+        docker build -t configmap-reload:latest -f docker/Dockerfile .
+

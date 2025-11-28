@@ -8,6 +8,8 @@ import { CheckReadinessUseCase } from './application/use-cases/check-readiness.u
 import { CheckStartupUseCase } from './application/use-cases/check-startup.use-case';
 import { AppLoggerService } from './infrastructure/external/logger.service';
 import { MetricsService } from './infrastructure/external/metrics.service';
+import { CircuitBreakerService } from './infrastructure/external/circuit-breaker.service';
+import { HealthHistoryService } from './infrastructure/external/health-history.service';
 
 /**
  * AppModule
@@ -25,6 +27,8 @@ import { MetricsService } from './infrastructure/external/metrics.service';
     // Infrastructure Services
     AppLoggerService,
     MetricsService,
+    CircuitBreakerService,
+    HealthHistoryService,
     // Domain Services
     HealthCheckDomainService,
     // Use Cases

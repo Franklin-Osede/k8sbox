@@ -3,21 +3,26 @@ import { HealthCheckDomainService } from '../../src/domain/domain-services/healt
 import { HealthCheckResult } from '../../src/domain/value-objects/health-check-result.vo';
 import { HealthStatus } from '../../src/domain/entities/health-status.entity';
 import { AppLoggerService } from '../../src/infrastructure/external/logger.service';
+import { CircuitBreakerService } from '../../src/infrastructure/external/circuit-breaker.service';
+import { DependencyStatus } from '../../src/domain/value-objects/dependency-status.vo';
 
 describe('HealthCheckDomainService', () => {
   let service: HealthCheckDomainService;
   let logger: AppLoggerService;
+  let circuitBreaker: CircuitBreakerService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         HealthCheckDomainService,
         AppLoggerService,
+        CircuitBreakerService,
       ],
     }).compile();
 
     service = module.get<HealthCheckDomainService>(HealthCheckDomainService);
     logger = module.get<AppLoggerService>(AppLoggerService);
+    circuitBreaker = module.get<CircuitBreakerService>(CircuitBreakerService);
   });
 
   describe('checkLiveness', () => {
@@ -31,9 +36,13 @@ describe('HealthCheckDomainService', () => {
 
   describe('checkReadiness', () => {
     it('should return healthy when dependencies are ready', async () => {
+      // Mock circuit breaker to return healthy dependency
+      jest.spyOn(circuitBreaker, 'execute').mockResolvedValue(
+        DependencyStatus.healthy('system-resources', 0),
+      );
+
       const result = await service.checkReadiness();
       
-      // Currently mocked to return true
       expect(result.isHealthy).toBe(true);
       expect(result.message).toBe('Application is ready');
     });

@@ -1,10 +1,13 @@
-import { Controller, Get, HttpCode, HttpStatus, HttpException } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { Controller, Get, HttpCode, HttpStatus, HttpException, Query } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { CheckLivenessUseCase } from '../../application/use-cases/check-liveness.use-case';
 import { CheckReadinessUseCase } from '../../application/use-cases/check-readiness.use-case';
 import { CheckStartupUseCase } from '../../application/use-cases/check-startup.use-case';
 import { HealthResponseDto } from '../dto/health-response.dto';
 import { MetricsService } from '../../infrastructure/external/metrics.service';
+import { HealthHistoryService } from '../../infrastructure/external/health-history.service';
+import { CircuitBreakerService } from '../../infrastructure/external/circuit-breaker.service';
+import { HealthHistoryResponseDto, CircuitBreakerStateDto } from '../dto/health-history.dto';
 
 /**
  * Controller: HealthController
@@ -18,6 +21,8 @@ export class HealthController {
     private readonly checkReadinessUseCase: CheckReadinessUseCase,
     private readonly checkStartupUseCase: CheckStartupUseCase,
     private readonly metricsService: MetricsService,
+    private readonly healthHistoryService: HealthHistoryService,
+    private readonly circuitBreakerService: CircuitBreakerService,
   ) {}
 
   @Get('live')
@@ -103,6 +108,9 @@ export class HealthController {
       this.checkStartupUseCase.execute(),
     ]);
 
+    // Record in history
+    this.healthHistoryService.record(liveness, readiness, startup);
+
     const allHealthy = liveness.isHealthy && readiness.isHealthy && startup.isHealthy;
 
     return {
@@ -124,6 +132,54 @@ export class HealthController {
         },
       },
     };
+  }
+
+  @Get('history')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Get health check history' })
+  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of records to return' })
+  @ApiResponse({ status: 200, description: 'Health check history', type: HealthHistoryResponseDto })
+  async getHistory(@Query('limit') limit?: number): Promise<HealthHistoryResponseDto> {
+    const historyLimit = limit ? parseInt(limit.toString(), 10) : 10;
+    const history = this.healthHistoryService.getHistory(historyLimit);
+    const stats = this.healthHistoryService.getUptimeStats();
+
+    return {
+      history: history.map((h) => ({
+        timestamp: h.timestamp.toISOString(),
+        liveness: {
+          status: h.liveness.isHealthy ? 'healthy' : 'unhealthy',
+          message: h.liveness.message,
+        },
+        readiness: {
+          status: h.readiness.isHealthy ? 'ready' : 'not-ready',
+          message: h.readiness.message,
+        },
+        startup: {
+          status: h.startup.isHealthy ? 'started' : 'starting',
+          message: h.startup.message,
+        },
+        overallStatus: h.overallStatus,
+      })),
+      stats,
+    };
+  }
+
+  @Get('circuits')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Get circuit breaker states' })
+  @ApiResponse({ status: 200, description: 'Circuit breaker states' })
+  async getCircuitBreakers(): Promise<{ circuits: CircuitBreakerStateDto[] }> {
+    const states = this.circuitBreakerService.getAllCircuitStates();
+    const circuits: CircuitBreakerStateDto[] = Object.entries(states).map(([name, state]) => ({
+      circuitName: name,
+      state: state.state,
+      failureCount: state.failureCount,
+      lastFailureTime: state.lastFailureTime?.toISOString(),
+      nextAttemptTime: state.nextAttemptTime?.toISOString(),
+    }));
+
+    return { circuits };
   }
 }
 

@@ -91,7 +91,7 @@ docker run -p 3000:3000 health-checks:latest
 
 ## ☸️ Kubernetes Deployment
 
-### With Helm
+### With Helm (Recommended)
 ```bash
 # Deploy
 make deploy
@@ -106,9 +106,21 @@ make kubectl:get:all
 make kubectl:logs
 ```
 
-### With kubectl
+### With kubectl + Kustomize
 ```bash
-kubectl apply -f k8s/base/
+# Apply base manifests
+kubectl apply -k k8s/base/
+
+# Apply with environment overlay
+kubectl apply -k k8s/overlays/dev/
+kubectl apply -k k8s/overlays/staging/
+kubectl apply -k k8s/overlays/prod/
+```
+
+### With kubectl (direct)
+```bash
+kubectl apply -f k8s/base/deployment.yaml
+kubectl apply -f k8s/base/service.yaml
 ```
 
 ## 📊 Health Check Endpoints
@@ -137,21 +149,84 @@ curl http://localhost:3000/health/ready
 curl http://localhost:3000/health/startup
 ```
 
+### Complete Health Check
+```bash
+curl http://localhost:3000/health
+```
+
+### Health Check History
+```bash
+curl http://localhost:3000/health/history?limit=10
+```
+
+Response:
+```json
+{
+  "history": [
+    {
+      "timestamp": "2024-01-01T00:00:00.000Z",
+      "liveness": { "status": "healthy", "message": "Alive" },
+      "readiness": { "status": "ready", "message": "Ready" },
+      "startup": { "status": "started", "message": "Started" },
+      "overallStatus": "healthy"
+    }
+  ],
+  "stats": {
+    "totalChecks": 100,
+    "healthyCount": 95,
+    "degradedCount": 3,
+    "unhealthyCount": 2,
+    "uptimePercentage": 95.0
+  }
+}
+```
+
+### Circuit Breaker States
+```bash
+curl http://localhost:3000/health/circuits
+```
+
+Response:
+```json
+{
+  "circuits": [
+    {
+      "circuitName": "system-resources",
+      "state": "closed",
+      "failureCount": 0,
+      "lastFailureTime": null,
+      "nextAttemptTime": null
+    }
+  ]
+}
+```
+
 ## 🎓 Skills Demonstrated
 
 - ✅ Domain-Driven Design (DDD)
 - ✅ Test-Driven Development (TDD)
 - ✅ Clean Architecture
 - ✅ Kubernetes Probes (Liveness, Readiness, Startup)
+- ✅ **Circuit Breaker Pattern** - Advanced resilience pattern
+- ✅ **Health Check History** - Observability and uptime tracking
+- ✅ Prometheus metrics
+- ✅ Structured logging (Winston)
 - ✅ NestJS Best Practices
 - ✅ Docker Multi-stage Builds
 - ✅ Helm Charts
 
-## 📚 Next Steps
+## 🚀 Advanced Features
 
-1. Implement actual dependency checks in `checkDependencies()`
-2. Add Prometheus metrics endpoint
-3. Add database health checks
-4. Add external service health checks
-5. Implement circuit breaker pattern
+### Circuit Breaker Pattern
+- Protects against cascading failures
+- States: CLOSED → OPEN → HALF_OPEN
+- Auto-recovery after timeout
+- Configurable failure thresholds
+- Applied to dependency health checks
+
+### Health Check History
+- Tracks all health check results
+- Calculates uptime statistics
+- Provides historical data for analysis
+- Configurable history size (default: 100 records)
 

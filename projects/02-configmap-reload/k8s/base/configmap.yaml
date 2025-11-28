@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  labels:
+    app: configmap-reload
+data:
+  app.properties: |
+    app.name=ConfigMap Reload Service
+    app.version=1.0.0
+    app.environment=production
+  database.properties: |
+    db.host=localhost
+    db.port=5432
+    db.name=appdb
+
