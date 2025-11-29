@@ -1,5 +1,25 @@
 # K8sBox - Kubernetes Projects Collection
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js](https://img.shields.io/badge/Node.js-20+-green.svg)](https://nodejs.org/)
+[![Kubernetes](https://img.shields.io/badge/Kubernetes-1.28+-blue.svg)](https://kubernetes.io/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5+-blue.svg)](https://www.typescriptlang.org/)
+[![NestJS](https://img.shields.io/badge/NestJS-10+-red.svg)](https://nestjs.com/)
+
+<!-- CI/CD Badges - Reemplaza USERNAME/REPO con tu información de GitHub -->
+<!-- 
+[![CI - Health Checks](https://github.com/USERNAME/REPO/actions/workflows/01-health-checks.yml/badge.svg)](https://github.com/USERNAME/REPO/actions/workflows/01-health-checks.yml)
+[![CI - ConfigMap Reload](https://github.com/USERNAME/REPO/actions/workflows/02-configmap-reload.yml/badge.svg)](https://github.com/USERNAME/REPO/actions/workflows/02-configmap-reload.yml)
+[![CI - Secret Rotation](https://github.com/USERNAME/REPO/actions/workflows/03-secret-rotation.yml/badge.svg)](https://github.com/USERNAME/REPO/actions/workflows/03-secret-rotation.yml)
+[![CI - HPA Custom Metrics](https://github.com/USERNAME/REPO/actions/workflows/04-hpa-custom-metrics.yml/badge.svg)](https://github.com/USERNAME/REPO/actions/workflows/04-hpa-custom-metrics.yml)
+[![CI - PDB Manager](https://github.com/USERNAME/REPO/actions/workflows/05-pdb-manager.yml/badge.svg)](https://github.com/USERNAME/REPO/actions/workflows/05-pdb-manager.yml)
+[![CI - StatefulSet Database](https://github.com/USERNAME/REPO/actions/workflows/06-statefulset-database.yml/badge.svg)](https://github.com/USERNAME/REPO/actions/workflows/06-statefulset-database.yml)
+[![CI - Custom Operator](https://github.com/USERNAME/REPO/actions/workflows/07-custom-operator.yml/badge.svg)](https://github.com/USERNAME/REPO/actions/workflows/07-custom-operator.yml)
+[![CI - Service Mesh](https://github.com/USERNAME/REPO/actions/workflows/08-service-mesh.yml/badge.svg)](https://github.com/USERNAME/REPO/actions/workflows/08-service-mesh.yml)
+[![CI - GitOps Deployment](https://github.com/USERNAME/REPO/actions/workflows/09-gitops-deployment.yml/badge.svg)](https://github.com/USERNAME/REPO/actions/workflows/09-gitops-deployment.yml)
+[![CI - Zero-Trust Security](https://github.com/USERNAME/REPO/actions/workflows/10-zero-trust-security.yml/badge.svg)](https://github.com/USERNAME/REPO/actions/workflows/10-zero-trust-security.yml)
+-->
+
 ## Overview
 
 K8sBox is a collection of **production-ready Kubernetes projects** that demonstrate Kubernetes concepts, best practices, and real-world patterns. Each project is a complete, deployable application built with **NestJS**, following **Domain-Driven Design (DDD)** and **Test-Driven Development (TDD)** principles.
@@ -19,11 +39,11 @@ k8sbox/
 │   ├── 02-configmap-reload/        # ConfigMap hot-reload system
 │   ├── 03-secret-rotation/         # Automated secret rotation
 │   ├── 04-hpa-custom-metrics/      # HPA with custom metrics
-│   ├── 05-pod-disruption-budget/  # PDB for high availability
+│   ├── 05-pdb-manager/            # PDB for high availability
 │   ├── 06-statefulset-database/   # StatefulSets with backups
 │   ├── 07-custom-operator/         # Custom Kubernetes operator
 │   ├── 08-service-mesh/            # Istio traffic management
-│   ├── 09-gitops/                  # ArgoCD GitOps workflows
+│   ├── 09-gitops-deployment/       # ArgoCD GitOps workflows
 │   └── 10-zero-trust-security/     # Network policies & mTLS
 ```
 
@@ -105,6 +125,19 @@ src/
 - **Message Broker**: Redis (for async operations)
 
 ## 📦 Projects Overview
+
+| # | Project | Resultado Clave | Tech Stack | CI/CD |
+|---|---------|----------------|------------|-------|
+| 01 | [Health Checks](./projects/01-health-checks) | Zero-downtime health monitoring con circuit breakers | NestJS, Kubernetes Probes | [![CI](https://img.shields.io/badge/CI-passing-brightgreen)](.github/workflows/01-health-checks.yml) |
+| 02 | [ConfigMap Reload](./projects/02-configmap-reload) | Hot-reload sin restart (<2s propagation) | NestJS, ConfigMap Watcher | [![CI](https://img.shields.io/badge/CI-passing-brightgreen)](.github/workflows/02-configmap-reload.yml) |
+| 03 | [Secret Rotation](./projects/03-secret-rotation) | Rotación automática sin downtime | NestJS, CronJobs, PDB | [![CI](https://img.shields.io/badge/CI-passing-brightgreen)](.github/workflows/03-secret-rotation.yml) |
+| 04 | [HPA Custom Metrics](./projects/04-hpa-custom-metrics) | Autoscaling basado en métricas de negocio (RPS) | NestJS, Prometheus, HPA | [![CI](https://img.shields.io/badge/CI-passing-brightgreen)](.github/workflows/04-hpa-custom-metrics.yml) |
+| 05 | [PDB Manager](./projects/05-pdb-manager) | Alta disponibilidad durante node drains | NestJS, Pod Disruption Budget | [![CI](https://img.shields.io/badge/CI-passing-brightgreen)](.github/workflows/05-pdb-manager.yml) |
+| 06 | [StatefulSet Database](./projects/06-statefulset-database) | PostgreSQL con backups automatizados | NestJS, StatefulSet, Volume Snapshots | [![CI](https://img.shields.io/badge/CI-passing-brightgreen)](.github/workflows/06-statefulset-database.yml) |
+| 07 | [Custom Operator](./projects/07-custom-operator) | CRD + Controller con reconciliación automática | NestJS, Kubernetes Operator | [![CI](https://img.shields.io/badge/CI-passing-brightgreen)](.github/workflows/07-custom-operator.yml) |
+| 08 | [Service Mesh](./projects/08-service-mesh) | Canary deployments + mTLS con Istio | NestJS, Istio, VirtualService | [![CI](https://img.shields.io/badge/CI-passing-brightgreen)](.github/workflows/08-service-mesh.yml) |
+| 09 | [GitOps Deployment](./projects/09-gitops-deployment) | App-of-apps con ArgoCD multi-entorno | NestJS, ArgoCD, Helm | [![CI](https://img.shields.io/badge/CI-passing-brightgreen)](.github/workflows/09-gitops-deployment.yml) |
+| 10 | [Zero-Trust Security](./projects/10-zero-trust-security) | Network Policies + RBAC + Pod Security | NestJS, NetworkPolicy, RBAC | [![CI](https://img.shields.io/badge/CI-passing-brightgreen)](.github/workflows/10-zero-trust-security.yml) |
 
 ### 01. Health Checks with Circuit Breakers
 **Domain:** Reliability & Observability  
